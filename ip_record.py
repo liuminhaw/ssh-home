@@ -73,7 +73,7 @@ def main():
     # Set date data
     current_datetime = datetime.now()
     current_year = current_datetime.strftime('%Y')
-    current_date = current_datetime.strftime('%d/%m/%Y')
+    current_date = current_datetime.strftime('%m/%d/%Y')
     current_time = current_datetime.strftime('%H:%M:%S')
 
     # Get template sheet ID
