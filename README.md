@@ -1,6 +1,8 @@
 # ip-record
 Record dynamic ip address to Google sheet
 
+## Version 0.1.0
+
 ## Additional Requirements
 - GCP
     - Sheet API enabled
