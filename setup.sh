@@ -42,10 +42,17 @@ function Installation() {
 
     cp -r module_pkg ${DESTDIR}
     checkCode 11 "Copy module_pkg directory failed." &> /dev/null    
+    cp -r general_pkg ${DESTDIR}
+    checkCode 11 "Copy general_pkg directory failed." &> /dev/null    
+
     cp ip_record.py ${DESTDIR}
     checkCode 11 "Copy ip_record.py failed." &> /dev/null    
     chmod 755 ${DESTDIR}/ip_record.py
     checkCode 13 "Change ip_record.py file permission failed." &> /dev/null    
+    cp home_connect.py ${DESTDIR}
+    checkCode 11 "Copy home_connect.py failed." &> /dev/null    
+    chmod 755 ${DESTDIR}/home_connect.py
+    checkCode 13 "Change home_connect.py file permission failed." &> /dev/null    
 }
 
 

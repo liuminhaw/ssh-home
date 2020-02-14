@@ -15,12 +15,15 @@ class Config():
         # self.HOME = str(pathlib.Path.home())
 
         # Sections 
-        self.CUSTOM= 'CUSTOM'
+        self.GENERAL= 'GENERAL'
 
         # Keys
         self.SHEET_ID = 'sheet-id'
         self.CREDENTIAL_FILE = 'credential-file'
         self.TEMPLATE_SHEET = 'template-sheet'
+        self.SSH_USER = 'ssh-user'
+        self.SSH_PORT = 'ssh-port'
+        self.SSH_KEY_PATH = 'ssh-key-path'
 
         # Get config information
         self.candidates = candidates
@@ -34,24 +37,42 @@ class Config():
 
     def sheet_id(self):
         """
-        Return config sheet-id option in CUSTOM section
+        Return config sheet-id option in GENERAL section
         If sheet-id not exist, return default value in DEFAULT section
         """
-        return self._read_value(self.CUSTOM, self.SHEET_ID)
+        return self._read_value(self.GENERAL, self.SHEET_ID)
 
     def credential_file(self):
         """
-        Return config credential-file option in CUSTOM section
+        Return config credential-file option in GENERAL section
         If credential-file not exist, return default value in DEFAULT section
         """
-        return self._read_value(self.CUSTOM, self.CREDENTIAL_FILE)
+        return self._read_value(self.GENERAL, self.CREDENTIAL_FILE)
 
     def template_sheet(self):
         """
-        Return config template-sheet option in CUSTOM section
+        Return config template-sheet option in GENERAL section
         If template-sheet not exist, return default value in DEFAULT section
         """
-        return self._read_value(self.CUSTOM, self.TEMPLATE_SHEET)
+        return self._read_value(self.GENERAL, self.TEMPLATE_SHEET)
+
+    def ssh_user(self, section_name):
+        """
+        Return config ssh-user option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.SSH_USER)
+
+    def ssh_port(self, section_name):
+        """
+        Return config ssh-port option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.SSH_PORT)
+
+    def ssh_key_path(self, section_name):
+        """
+        Return config ssh-key-path option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.SSH_KEY_PATH)
 
     
     def _read_value(self, section, key):
@@ -74,6 +95,18 @@ class Config():
             raise NoOptionError(key)
         else:
             return _config_value
+
+    # def _section_existence(self, section_name):
+    #     """
+    #     Check if section_name exist in config file
+    #     Return:
+    #         True - section_name exist
+    #         False - section_name doesn't exist
+    #     """
+    #     if section_name in self._config.keys():
+    #         return True
+    #     else:
+    #         return False
 
 
 # Exceptions

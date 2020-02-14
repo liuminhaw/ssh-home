@@ -92,3 +92,17 @@ class IpSheet():
         request = self.service.spreadsheets().values().update(spreadsheetId=self.id, 
             range=range, valueInputOption=value_input_option, body=value_range_body)
         response = request.execute()
+
+    def read_ip(self, range):
+        """
+        Get latest IP address from target sheet
+        Input params:
+            range - A1 notation range
+        Return:
+            latest ip address
+        """
+        request = self.service.spreadsheets().values().get(spreadsheetId=self.id, range=range)
+        response = request.execute()
+
+        ip_address = response['values'][0][0]
+        return ip_address
