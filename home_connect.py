@@ -20,7 +20,6 @@ from module_pkg import conf_mod
 from module_pkg import sheet
 from module_pkg import logging_class as logcl
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 CONFIG_FILE = ['config.ini']
 LOG_DIR = os.path.join(os.getcwd(), 'logs')
