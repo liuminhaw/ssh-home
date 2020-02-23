@@ -3,7 +3,10 @@ Record dynamic public ip and use the record value to make SSH connection
 - `ip_record`
 - `home_connect`
 
-## Version 0.2.0
+## Version 0.2.1
+- Fix missing google credential SCOPES definition 
+
+### Version 0.2.0
 - Add `home-connect` feature (autoconnect)
 - multiple ssh connect sections configuration
 
