@@ -11,6 +11,21 @@
 #   13 - Change file permission failed
 
 
+# ----------------------------------------------------------------------------
+# Function definition
+#
+# Usage: show_help
+# ----------------------------------------------------------------------------
+showHelp() {
+cat << EOF
+Usage: ${0##*/} home-connect|ip-record|all DESTINATION
+
+    home-connect            Setup for home-connect function
+    ip-record               Setup for ip-record function
+    all                     Setup for all functions
+EOF
+}
+
 # ============================
 # Check exit code function
 # USAGE:
@@ -45,29 +60,53 @@ function Installation() {
     cp -r general_pkg ${DESTDIR}
     checkCode 11 "Copy general_pkg directory failed." &> /dev/null    
 
-    cp ip_record.py ${DESTDIR}
-    checkCode 11 "Copy ip_record.py failed." &> /dev/null    
-    chmod 755 ${DESTDIR}/ip_record.py
-    checkCode 13 "Change ip_record.py file permission failed." &> /dev/null    
-    cp home_connect.py ${DESTDIR}
-    checkCode 11 "Copy home_connect.py failed." &> /dev/null    
-    chmod 755 ${DESTDIR}/home_connect.py
-    checkCode 13 "Change home_connect.py file permission failed." &> /dev/null    
+    # ip_record setup
+    if [[ "${IP_RECORD}" = true ]]; then
+        cp ip_record.py ${DESTDIR}
+        checkCode 11 "Copy ip_record.py failed." &> /dev/null    
+        chmod 755 ${DESTDIR}/ip_record.py
+        checkCode 13 "Change ip_record.py file permission failed." &> /dev/null    
+    fi
+
+    # home_connect setup
+    if [[ "${HOME_CONNECT}" = true ]]; then
+        cp home_connect.py ${DESTDIR}
+        checkCode 11 "Copy home_connect.py failed." &> /dev/null    
+        chmod 755 ${DESTDIR}/home_connect.py
+        checkCode 13 "Change home_connect.py file permission failed." &> /dev/null    
+    fi
 }
 
 
 # Calling setup format check
-USAGE="setup.sh DESTINATION"
-
-if [[ "${#}" -ne 1 ]];  then
-    echo -e "USAGE:\n    ${USAGE}"
+if [[ "${#}" -ne 2 ]];  then
+    showHelp
     exit 1
 fi
 
-if [[ ! -d ${1} ]]; then
+DESTINATION=${2}
+if [[ ! -d ${DESTINATION} ]]; then
     echo "ERROR: Destination directory does not exist"
     exit 3
 fi
+
+SETUP_TYPE=${1}
+case ${SETUP_TYPE} in
+    home-connect)
+        HOME_CONNECT=true
+        ;;
+    ip-record)
+        IP_RECORD=true
+        ;;
+    all)
+        HOME_CONNECT=true
+        IP_RECORD=true
+        ;;
+    *)
+        showHelp
+        exit 1
+        ;;
+esac
 
 
 # System checking
@@ -76,7 +115,7 @@ case ${SYSTEM_RELEASE} in
   *Linux*)
     echo "Linux detected"
     echo ""
-    Installation ${1}
+    Installation ${DESTINATION}
     ;;
   *)
     echo "System not supported."

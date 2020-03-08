@@ -3,14 +3,20 @@ Record dynamic public ip and use the record value to make SSH connection
 - `ip_record`
 - `home_connect`
 
-## Version 0.2.1
+## Version 0.2.2
+- Add `setup` options
+    - `home-connect`: Setup home-connect feature
+    - `ip-record`: Setup ip-record feature
+    - `all`: Setup all feature
+
+#### Version 0.2.1 (hotfix)
 - Fix missing google credential SCOPES definition 
 
-### Version 0.2.0
+#### Version 0.2.0
 - Add `home-connect` feature (autoconnect)
 - multiple ssh connect sections configuration
 
-### Version 0.1.0
+#### Version 0.1.0
 
 ## Additional Requirements
 - GCP
@@ -38,7 +44,11 @@ ssh-key-path: secret key for ssh login
 **`setup.sh`** file  
 Setup environment
 ```
-./setup.sh DESTINATION_DIRECTORY
+./setup.sh home-connect|ip-record|all DESTINATION
+
+    home-connect            Setup for home-connect function
+    ip-record               Setup for ip-record function
+    all                     Setup for all functions
 ```
 
 ## Usage
