@@ -3,6 +3,7 @@
 # Standard library imports
 import os, sys
 import pickle
+import argparse
 from datetime import datetime
 
 # Third party library imports
@@ -18,12 +19,23 @@ from module_pkg import conf_mod
 from module_pkg import sheet
 from module_pkg import logging_class as logcl
 
+VERSION = 'v0.3.0'
+
 CONFIG_FILE = ['config.ini']
 LOG_DIR = os.path.join(os.getcwd(), 'logs')
 
 logger = logcl.PersonalLog('ip_record', LOG_DIR)
 
 def main():
+
+    # arguments definition
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    args = arg_parser.parse_args()
+
+    if args.version:
+        print('Version: {}'.format(VERSION))
+        sys.exit(0)
 
     # Read ini config file and value
     try:
