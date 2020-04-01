@@ -73,14 +73,15 @@ def main():
 
     # Add ip record
     last_row = ip_spreadsheet.get_last_row('{}!A:A'.format(current_year))
-    #print('Last row: {}'.format(last_row))
+    last_ip = ip_spreadsheet.read_ip('{}!C{}'.format(current_year, last_row))
 
     current_ip = public_ip()
-    update_range = '{sheet}!A{row}:C{row}'.format(sheet=current_year, row=last_row+1)
-    update_values = [current_date, current_time, current_ip]
-    #print('Updae range: {}'.format(update_range))
 
-    ip_spreadsheet.update_ip(update_range, update_values)
+    if current_ip != last_ip:
+        update_range = '{sheet}!A{row}:C{row}'.format(sheet=current_year, row=last_row+1)
+        update_values = [current_date, current_time, current_ip]
+        ip_spreadsheet.update_ip(update_range, update_values)
+
     information += 'Current IP: {}'.format(current_ip)
     logger.info(information)
 
