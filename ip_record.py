@@ -8,9 +8,6 @@ from datetime import datetime
 
 # Third party library imports
 import requests
-# from googleapiclient.discovery import build
-# from google_auth_oauthlib.flow import InstalledAppFlow
-# from google.auth.transport.requests import Request
 
 # Local application imports
 from general_pkg import ssh_home_lib as sh_lib
@@ -30,12 +27,8 @@ def main():
 
     # arguments definition
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(VERSION))
     args = arg_parser.parse_args()
-
-    if args.version:
-        print('Version: {}'.format(VERSION))
-        sys.exit(0)
 
     # Read ini config file and value
     try:

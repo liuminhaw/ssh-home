@@ -6,6 +6,7 @@
 # Standard library imports
 import sys, os
 import pickle, subprocess
+import argparse
 from datetime import datetime
 
 # Third party library imports
@@ -20,6 +21,7 @@ from module_pkg import conf_mod
 from module_pkg import sheet
 from module_pkg import logging_class as logcl
 
+VERSION = 'v0.3.0'
 
 CONFIG_FILE = ['config.ini']
 LOG_DIR = os.path.join(os.getcwd(), 'logs')
@@ -29,11 +31,16 @@ logger = logcl.PersonalLog('home_connect', LOG_DIR)
 
 def main():
 
-    if len(sys.argv) != 2:
-        show_help()
-        sys.exit(1)
-    else:
-        connection_name = sys.argv[1]
+    # arguments definition
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('connection', help='Section name set in configuration file - config.ini')
+    # arg_parser.add_argument("-V", "--version", help="show program version", action="store_true")
+    arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(VERSION))
+    args = arg_parser.parse_args()
+
+    connection_name = args.connection
+    logger.info('Connection name: {}'.format(connection_name))
+
 
     # Read ini config file and value
     try:
@@ -84,18 +91,6 @@ def main():
 
     print('Disconnected')
 
-
-
-def show_help():
-    message = \
-    """
-    USAGE:
-        home_connect.py CONNECT_NAME
-    DESCRIPTION:
-        CONNECT_NAME should be section set inside configurtaion file - config.ini
-    """
-
-    print(message)
 
 
 if __name__ == '__main__':
