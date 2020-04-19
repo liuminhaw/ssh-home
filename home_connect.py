@@ -16,17 +16,14 @@ from google.auth.transport.requests import Request
 
 # Local application imports
 from general_pkg import ssh_home_lib as sh_lib
+from general_pkg import env
 
 from module_pkg import conf_mod
 from module_pkg import sheet
 from module_pkg import logging_class as logcl
 
-VERSION = 'v0.3.0'
 
-CONFIG_FILE = ['config.ini']
-LOG_DIR = os.path.join(os.getcwd(), 'logs')
-
-logger = logcl.PersonalLog('home_connect', LOG_DIR)
+logger = logcl.PersonalLog('home_connect', env.LOG_DIR)
 
 
 def main():
@@ -35,7 +32,7 @@ def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('connection', help='Section name set in configuration file - config.ini')
     # arg_parser.add_argument("-V", "--version", help="show program version", action="store_true")
-    arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(VERSION))
+    arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(env.VERSION))
     args = arg_parser.parse_args()
 
     connection_name = args.connection
@@ -44,7 +41,7 @@ def main():
 
     # Read ini config file and value
     try:
-        config = conf_mod.Config(CONFIG_FILE) 
+        config = conf_mod.Config(env.CONFIG_FILE) 
     except conf_mod.ConfigNotFoundError as err:
         logging = 'Config file config.ini not found: {}'.format(err)
         logger.info(logging)
