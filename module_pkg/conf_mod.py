@@ -24,6 +24,12 @@ class Config():
         self.SSH_USER = 'ssh-user'
         self.SSH_PORT = 'ssh-port'
         self.SSH_KEY_PATH = 'ssh-key-path'
+        self.RSYNC_USER = 'rsync-user'
+        self.RSYNC_DEST = 'rsync-dest'
+        self.RSYNC_SOURCE = 'rsync-source'
+        self.RSYNC_OPTIONS = 'rsync-options'
+        self.RSYNC_PORT = 'rsync-port'
+        self.RSYNC_KEY_PATH = 'rsync-key-path'
 
         # Get config information
         self.candidates = candidates
@@ -73,6 +79,42 @@ class Config():
         Return config ssh-key-path option in specific CONNECTION_NAME section
         """
         return self._read_value(section_name, self.SSH_KEY_PATH)
+
+    def rsync_user(self, section_name):
+        """
+        Return config rsync-user option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_USER)
+
+    def rsync_dest(self, section_name):
+        """
+        Return config rsync-dest option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_DEST)
+
+    def rsync_source(self, section_name):
+        """
+        Return config rsync-source option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_SOURCE)
+
+    def rsync_options(self, section_name):
+        """
+        Return config rsync-options option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_OPTIONS)
+
+    def rsync_port(self, section_name):
+        """
+        Return config rsync-port option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_PORT)
+
+    def rsync_key_path(self, section_name):
+        """
+        Return config rsync-key-path option in specific CONNECTION_NAME section
+        """
+        return self._read_value(section_name, self.RSYNC_KEY_PATH)
 
     
     def _read_value(self, section, key):

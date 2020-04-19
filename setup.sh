@@ -18,9 +18,10 @@
 # ----------------------------------------------------------------------------
 showHelp() {
 cat << EOF
-Usage: ${0##*/} home-connect|ip-record|all DESTINATION
+Usage: ${0##*/} home-connect|home-rsync|ip-record|all DESTINATION
 
     home-connect            Setup for home-connect function
+    home-rsync              Setup for home-rsync function
     ip-record               Setup for ip-record function
     all                     Setup for all functions
 EOF
@@ -75,6 +76,14 @@ function Installation() {
         chmod 755 ${DESTDIR}/home_connect.py
         checkCode 13 "Change home_connect.py file permission failed." &> /dev/null    
     fi
+
+    # home_rsync setup
+    if [[ "${HOME_RSYNC}" = true ]]; then
+        cp home_rsync.py ${DESTDIR}
+        checkCode 11 "Copy home_rsync.py failed." &> /dev/null    
+        chmod 755 ${DESTDIR}/home_rsync.py
+        checkCode 13 "Change home_rsync.py file permission failed." &> /dev/null    
+    fi
 }
 
 
@@ -95,11 +104,15 @@ case ${SETUP_TYPE} in
     home-connect)
         HOME_CONNECT=true
         ;;
+    home-rsync)
+        HOME_RSYNC=true
+        ;;
     ip-record)
         IP_RECORD=true
         ;;
     all)
         HOME_CONNECT=true
+        HOME_RSYNC=true
         IP_RECORD=true
         ;;
     *)

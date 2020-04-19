@@ -15,8 +15,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # Local application imports
-from general_pkg import ssh_home_lib as sh_lib
 from general_pkg import env
+from general_pkg import credential as cred
 
 from module_pkg import conf_mod
 from module_pkg import sheet
@@ -62,14 +62,12 @@ def main():
         logger.info(logging)
         sys.exit(13)
 
-    credential = sh_lib.google_credential(credential_file)
+    credential = cred.google_credential(credential_file)
     ip_spreadsheet = sheet.IpSheet(credential, spreadsheet_id)
 
     # Set date data
     current_datetime = datetime.now()
     current_year = current_datetime.strftime('%Y')
-    current_date = current_datetime.strftime('%m/%d/%Y')
-    current_time = current_datetime.strftime('%H:%M:%S')
 
     # Get target sheet (named by current year)
     worksheet_id = ip_spreadsheet.find_sheet_id(current_year)

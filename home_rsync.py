@@ -1,13 +1,15 @@
 # -*- coding:UTF-8 -*-
 
 # Standard library imports
-import os, sys
-import pickle
+import sys, os
+import pickle, subprocess
 import argparse
 from datetime import datetime
 
 # Third party library imports
-import requests
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 # Local application imports
 from general_pkg import env
@@ -18,13 +20,19 @@ from module_pkg import sheet
 from module_pkg import logging_class as logcl
 
 
-logger = logcl.PersonalLog('ip_record', env.LOG_DIR)
+logger = logcl.PersonalLog('home_rsync', env.LOG_DIR)
 
 def main():
 
     # arguments definition
     arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument('connection', help='Section name set in configuration file - config.ini')
+    # arg_parser.add_argument("-V", "--version", help="show program version", action="store_true")
     arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(env.VERSION))
+    args = arg_parser.parse_args()
+
+    connection_name = args.connection
+    logger.info('Connection name: {}'.format(connection_name))
 
     # Read ini config file and value
     try:
@@ -37,7 +45,12 @@ def main():
     try:
         spreadsheet_id = config.sheet_id()
         credential_file = config.credential_file()
-        template = config.template_sheet()
+        rsync_user = config.rsync_user(connection_name)
+        rsync_dest = config.rsync_dest(connection_name)
+        rsync_source = config.rsync_source(connection_name)
+        rsync_options = config.rsync_options(connection_name)
+        rsync_port = config.rsync_port(connection_name)
+        rsync_key_path = config.rsync_key_path(connection_name)
     except conf_mod.NoSectionError as err:
         logging = 'config.ini section error: {}'.format(err)
         logger.info(logging)
@@ -47,54 +60,36 @@ def main():
         logger.info(logging)
         sys.exit(13)
 
-    information = '\nSpreadsheet id: {}\n'.format(spreadsheet_id)
-    information += 'Template name: {}\n'.format(template)
-
     credential = cred.google_credential(credential_file)
     ip_spreadsheet = sheet.IpSheet(credential, spreadsheet_id)
 
     # Set date data
     current_datetime = datetime.now()
     current_year = current_datetime.strftime('%Y')
-    current_date = current_datetime.strftime('%m/%d/%Y')
-    current_time = current_datetime.strftime('%H:%M:%S')
 
-    # Get template sheet ID
-    template_id = ip_spreadsheet.find_sheet_id(template)
-    if template_id == -1:
-        logger.info('Template sheet {} not found'.format(template))
-        sys.exit(3)
-    else:
-        information += 'Template ID: {}\n'.format(template_id)
-    
-    # Duplicate sheet for each year
+    # Get target sheet (named by current year)
     worksheet_id = ip_spreadsheet.find_sheet_id(current_year)
     if worksheet_id == -1:
-        ip_spreadsheet.dup_new_sheet(template_id, current_year, dest_id=current_year)
+        print('Sheet {} not found in spreadsheet {}'.format(current_year, spreadsheet_id))
+        sys.exit(5)
 
-    # Add ip record
     last_row = ip_spreadsheet.get_last_row('{}!A:A'.format(current_year))
-    last_ip = ip_spreadsheet.read_ip('{}!C{}'.format(current_year, last_row))
+    ip_address = ip_spreadsheet.read_ip('{}!C{}'.format(current_year, last_row))
 
-    current_ip = public_ip()
+    print('IP Address: {}'.format(ip_address))
 
-    if current_ip != last_ip:
-        update_range = '{sheet}!A{row}:C{row}'.format(sheet=current_year, row=last_row+1)
-        update_values = [current_date, current_time, current_ip]
-        ip_spreadsheet.update_ip(update_range, update_values)
-
-    information += 'Current IP: {}'.format(current_ip)
-    logger.info(information)
-
-
-def public_ip():
-    """
-    Find and return public ip address
-    Use Amazon AWS endpoint
-    """
-    return requests.get('https://checkip.amazonaws.com').text.strip()
+    # RSYNC process
+    rsync_options = rsync_options.split()
+    process_args = ['rsync', '-e', 
+                    "ssh -i {} -p {}".format(rsync_key_path, rsync_port),
+                    rsync_source,
+                    '{}@{}:{}'.format(rsync_user, ip_address, rsync_dest)]
+    # Insert rsync_options into arguments list
+    process_args[1:1] = rsync_options
+    subprocess.run(process_args)
 
 
 
 if __name__ == '__main__':
+    # Run codes
     main()
