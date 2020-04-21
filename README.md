@@ -1,5 +1,5 @@
 # ssh-home
-Record dynamic public ip and use the record value to make SSH connection and transfer
+Record dynamic public ip and use the record value to make SSH connection or transfer
 - `ip_record`
 - `home_connect`
 - `home_rsync`
@@ -7,7 +7,7 @@ Record dynamic public ip and use the record value to make SSH connection and tra
 
 ## Version 0.3.0
 - Add `home_rsync` feature
-- Add `version` options to show version
+- Add `version` option to show version information
 - Change ip record method to record if only ip has change 
 
 #### Version 0.2.2
@@ -107,9 +107,9 @@ optional arguments:
 ```
 
 ## Error Code
-`1` - program usage error
-`3` - template sheet not found  
-`5` - target sheet not found
+`1` - program usage error  
+`3` - template sheet not found    
+`5` - target sheet not found  
 `11` - conf_mod ConfigNotFoundError  
 `12` - conf_mod NoSectionError  
 `13` - conf_mod NoOptionError  
