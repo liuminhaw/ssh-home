@@ -1,9 +1,16 @@
 # ssh-home
-Record dynamic public ip and use the record value to make SSH connection
+Record dynamic public ip and use the record value to make SSH connection and transfer
 - `ip_record`
 - `home_connect`
+- `home_rsync`
 
-## Version 0.2.2
+
+## Version 0.3.0
+- Add `home_rsync` feature
+- Add `version` options to show version
+- Change ip record method to record if only ip has change 
+
+#### Version 0.2.2
 - Add `setup` options
     - `home-connect`: Setup home-connect feature
     - `ip-record`: Setup ip-record feature
@@ -33,20 +40,32 @@ sheet-id: Set sheet id to read
 credential-file: [Optional]
 template-sheet: [Optional]
 ```
-Connection configuration
+SSH connection configuration
 ```
-[CONNECTION_NAME]
+[CONNECTION_NAME_SSH]
 ssh-user: ssh login user
 ssh-port: ssh login port
 ssh-key-path: secret key for ssh login
 ```
 
+RSYNC connection configuration
+```
+[CONNECTION_NAME_RSYNC]
+rsync-user = rsync user
+rsync-dest = rsync destination (/destination/path)
+rsync-source = rsync source
+rsync-options = rsync options (-a --exclude) 
+rsync-port = rsync login port
+rsync-key-path = rsync login key path
+```
+
 **`setup.sh`** file  
 Setup environment
 ```
-./setup.sh home-connect|ip-record|all DESTINATION
+./setup.sh home-connect|home-rsync|ip-record|all DESTINATION
 
     home-connect            Setup for home-connect function
+    home-rsync              Setup for home-rsync function
     ip-record               Setup for ip-record function
     all                     Setup for all functions
 ```
@@ -54,16 +73,38 @@ Setup environment
 ## Usage
 
 #### ip_record
-Run this program to find your current public ip address and document it to Google spreadsheet
+Run this program to find your current public ip address and documented it to Google spreadsheet
 ```
-python3 ip_record.py
+usage: ip_record.py [-h] [-V]
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -V, --version  show program's version number and exit
 ```
 #### home_connect
 Run this program to ssh connect to `ip_record` lastest ip address
 ```
-python3 home_connect.py CONNECT_NAME
+usage: home_connect.py [-h] [-V] connection
+
+positional arguments:
+  connection     Section name set in configuration file - config.ini
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -V, --version  show program's version number and exit
 ``` 
-- `CONNECT_NAME`: Section name set in `config.ini` file
+#### home_rsync
+Run this program to perform rsync to destination of `ip_record` latest ip address
+```
+usage: home_rsync.py [-h] [-V] connection
+
+positional arguments:
+  connection     Section name set in configuration file - config.ini
+
+optional arguments:
+  -h, --help     show this help message and exit
+  -V, --version  show program's version number and exit
+```
 
 ## Error Code
 `1` - program usage error

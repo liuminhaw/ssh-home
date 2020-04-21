@@ -25,6 +25,7 @@ def main():
     # arguments definition
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('-V', '--version', action='version', version='%(prog)s {}'.format(env.VERSION))
+    arg_parser.parse_args()
 
     # Read ini config file and value
     try:
