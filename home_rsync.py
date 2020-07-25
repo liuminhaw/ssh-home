@@ -51,39 +51,46 @@ def main():
         rsync_options = config.rsync_options(connection_name)
         rsync_port = config.rsync_port(connection_name)
         rsync_key_path = config.rsync_key_path(connection_name)
+        connection_ip = config.connection_ip(connection_name)
     except conf_mod.NoSectionError as err:
         logging = 'config.ini section error: {}'.format(err)
         logger.info(logging)
         sys.exit(12)
     except conf_mod.NoOptionError as err:
-        logging = 'config.ini option error: {}'.format(err)
+        logging = 'config.ini no option error: {}'.format(err)
         logger.info(logging)
         sys.exit(13)
+    except conf_mod.OptionFormatError as eff:
+        logging = 'config.ini option format error: {}'.format(err)
+        logger.info(logging)
+        sys.exit(14)
 
-    credential = cred.google_credential(credential_file)
-    ip_spreadsheet = sheet.IpSheet(credential, spreadsheet_id)
 
-    # Set date data
-    current_datetime = datetime.now()
-    current_year = current_datetime.strftime('%Y')
+    if connection_ip == 'automatic':
+        credential = cred.google_credential(credential_file)
+        ip_spreadsheet = sheet.IpSheet(credential, spreadsheet_id)
 
-    # Get target sheet (named by current year)
-    worksheet_id = ip_spreadsheet.find_sheet_id(current_year)
-    if worksheet_id == -1:
-        print('Sheet {} not found in spreadsheet {}'.format(current_year, spreadsheet_id))
-        sys.exit(5)
+        # Set date data
+        current_datetime = datetime.now()
+        current_year = current_datetime.strftime('%Y')
 
-    last_row = ip_spreadsheet.get_last_row('{}!A:A'.format(current_year))
-    ip_address = ip_spreadsheet.read_ip('{}!C{}'.format(current_year, last_row))
+        # Get target sheet (named by current year)
+        worksheet_id = ip_spreadsheet.find_sheet_id(current_year)
+        if worksheet_id == -1:
+            print('Sheet {} not found in spreadsheet {}'.format(current_year, spreadsheet_id))
+            sys.exit(5)
 
-    print('IP Address: {}'.format(ip_address))
+        last_row = ip_spreadsheet.get_last_row('{}!A:A'.format(current_year))
+        connection_ip = ip_spreadsheet.read_ip('{}!C{}'.format(current_year, last_row))
+
+    print('IP Address: {}'.format(connection_ip))
 
     # RSYNC process
     rsync_options = rsync_options.split()
     process_args = ['rsync', '-e', 
                     "ssh -i {} -p {}".format(rsync_key_path, rsync_port),
                     rsync_source,
-                    '{}@{}:{}'.format(rsync_user, ip_address, rsync_dest)]
+                    '{}@{}:{}'.format(rsync_user, connection_ip, rsync_dest)]
     # Insert rsync_options into arguments list
     process_args[1:1] = rsync_options
     subprocess.run(process_args)

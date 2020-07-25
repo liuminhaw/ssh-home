@@ -57,6 +57,8 @@ rsync-source = rsync source
 rsync-options = rsync options (-a --exclude) 
 rsync-port = rsync login port
 rsync-key-path = rsync login key path
+# Optional setting
+connection-ip = Set connection ip address manully (Optional)
 ```
 
 **`setup.sh`** file  
@@ -113,3 +115,4 @@ optional arguments:
 `11` - conf_mod ConfigNotFoundError  
 `12` - conf_mod NoSectionError  
 `13` - conf_mod NoOptionError  
+`14` - conf_mod OptionFormatError
